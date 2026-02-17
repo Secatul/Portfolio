@@ -1,0 +1,71 @@
+---
+title: "Starting Point - HackTheBox"
+date: "2024-02-20"
+tags: ["HackTheBox", "Windows", "SMB", "Active Directory"]
+summary: "Introdução ao HackTheBox através das máquinas do Starting Point, focando em conceitos de Active Directory."
+difficulty: "Medium"
+platform: "HackTheBox"
+---
+
+## Visão Geral
+
+O Starting Point do HackTheBox oferece uma série de máquinas introdutórias que cobrem desde conceitos básicos até técnicas mais avançadas de pentesting.
+
+## Metodologia
+
+A metodologia seguida neste writeup segue o padrão:
+
+1. **Reconhecimento** - Identificação de serviços e versões
+2. **Enumeração** - Coleta detalhada de informações
+3. **Exploração** - Obtenção de acesso inicial
+4. **Pós-Exploração** - Escalação e movimentação lateral
+
+## Reconhecimento Inicial
+
+```bash
+nmap -sC -sV -p- -oN nmap/full 10.10.X.X
+```
+
+### Serviços Identificados
+
+- **SMB (445)** - Compartilhamento de arquivos Windows
+- **RPC (135)** - Remote Procedure Call
+- **WinRM (5985)** - Windows Remote Management
+
+## Enumeração SMB
+
+O protocolo SMB frequentemente expõe informações sensíveis quando mal configurado:
+
+```bash
+smbclient -L //10.10.X.X -N
+```
+
+Conseguimos listar shares sem autenticação, indicando configuração permissiva.
+
+## Active Directory
+
+Conceitos importantes de AD explorados:
+
+- **Kerberos** - Protocolo de autenticação
+- **LDAP** - Consultas ao diretório
+- **GPO** - Políticas de grupo
+
+### Enumeração com BloodHound
+
+BloodHound é uma ferramenta essencial para mapear relações em ambientes AD:
+
+```bash
+bloodhound-python -u user -p pass -d domain.local -ns 10.10.X.X
+```
+
+## Movimentação Lateral
+
+Após obter credenciais válidas, utilizamos ferramentas como:
+
+- `evil-winrm` para acesso remoto
+- `impacket-psexec` para execução de comandos
+- `crackmapexec` para spray de credenciais
+
+## Lições Aprendidas
+
+Ambientes Windows e Active Directory apresentam uma superfície de ataque única que requer conhecimento específico. A enumeração adequada é crucial para identificar caminhos de ataque viáveis.

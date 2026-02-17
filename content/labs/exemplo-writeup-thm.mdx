@@ -1,0 +1,68 @@
+---
+title: "Máquina Exemplo - TryHackMe"
+date: "2024-01-15"
+tags: ["TryHackMe", "Linux", "Web", "Privilege Escalation"]
+summary: "Writeup de uma máquina exemplo do TryHackMe focada em enumeração web e escalação de privilégios."
+difficulty: "Easy"
+platform: "TryHackMe"
+---
+
+## Introdução
+
+Esta é uma máquina de nível fácil do TryHackMe que aborda conceitos fundamentais de pentesting web e escalação de privilégios em sistemas Linux.
+
+## Reconhecimento
+
+Começamos com um scan de portas usando Nmap:
+
+```bash
+nmap -sC -sV -oN nmap/initial 10.10.X.X
+```
+
+### Portas Abertas
+
+| Porta | Serviço | Versão |
+|-------|---------|--------|
+| 22    | SSH     | OpenSSH 8.2 |
+| 80    | HTTP    | Apache 2.4 |
+
+## Enumeração Web
+
+Ao acessar a porta 80, encontramos uma página web padrão. Vamos enumerar diretórios:
+
+```bash
+gobuster dir -u http://10.10.X.X -w /usr/share/wordlists/dirb/common.txt
+```
+
+### Diretórios Encontrados
+
+- `/admin` - Página de login administrativa
+- `/uploads` - Diretório de uploads (listável)
+
+## Exploração
+
+Após análise da aplicação, identificamos uma vulnerabilidade de upload de arquivos que permite executar código no servidor.
+
+> **Nota:** O processo de exploração foi simplificado para fins educacionais. Em um cenário real, sempre documente cada passo detalhadamente.
+
+### Passos da Exploração
+
+1. Identificar o tipo de arquivo permitido
+2. Criar um payload adequado
+3. Fazer upload e executar
+4. Obter shell reverso
+
+## Escalação de Privilégios
+
+Uma vez com acesso ao sistema, verificamos permissões sudo:
+
+```bash
+sudo -l
+```
+
+O usuário possui permissão para executar um binário específico como root, o que nos permite escalar privilégios.
+
+## Conclusão
+
+Esta máquina demonstrou conceitos importantes de segurança web e Linux que são fundamentais para qualquer profissional da área.
+
